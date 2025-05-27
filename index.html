@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wedding Invitation Multi-Step Editor</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f9f4fc;
+            color: #4a148c;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .step-container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .form-preview-container {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .form-section,
+        .canvas-section {
+            flex: 1 1 400px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 6px 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #7b1fa2;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            margin: 10px 5px 0 0;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            user-select: none;
+        }
+
+        button:hover {
+            background: #4a148c;
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #allCardsPreview img {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
+            width: 420px;
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Wedding Invitation Multi-Step Editor</h1>
+
+    <div class="step-container">
+
+        <!-- Step 1 -->
+        <div id="step1" class="step">
+            <h2>Step 1: Bride Card</h2>
+            <div class="form-preview-container">
+                <div class="form-section">
+                    <label for="brideName1">Bride Name:</label>
+                    <input type="text" id="brideName1" placeholder="Bride Name" />
+                    <label for="groomName1">Groom Name:</label>
+                    <input type="text" id="groomName1" placeholder="Groom Name" />
+                </div>
+                <div class="canvas-section">
+                    <h3>Preview</h3>
+                    <canvas id="canvas1" width="600" height="800"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div id="step2" class="step hidden">
+            <h2>Step 2: Bride Details Card</h2>
+            <div class="form-preview-container">
+                <div class="form-section">
+                    <label for="brideImageUpload2">Upload Image:</label>
+                    <input type="file" id="brideImageUpload2" accept="image/*" />
+                    <label for="brideName2">Bride Name:</label>
+                    <input type="text" id="brideName2" placeholder="Bride Name" />
+                    <label for="briderelation2">Relation:</label>
+                    <input type="text" id="briderelation2" placeholder="Relation" />
+                    <label for="bridemotherName2">Mother's Name:</label>
+                    <input type="text" id="bridemotherName2" placeholder="Mother's Name" />
+                    <label for="bridefatherName2">Father's Name:</label>
+                    <input type="text" id="bridefatherName2" placeholder="Father's Name" />
+                    <label for="address2">Address:</label>
+                    <input type="text" id="address2" placeholder="Address" />
+                </div>
+                <div class="canvas-section">
+                    <h3>Preview</h3>
+                    <canvas id="canvas2" width="600" height="800"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Step 3 -->
+        <div id="step3" class="step hidden">
+            <h2>Step 3: Groom Details Card</h2>
+            <div class="form-preview-container">
+                <div class="form-section">
+                    <label for="groomImageUpload3">Upload Image:</label>
+                    <input type="file" id="groomImageUpload3" accept="image/*" />
+                    <label for="groomName3">Groom Name:</label>
+                    <input type="text" id="groomName3" placeholder="Groom Name" />
+                    <label for="groomrelation3">Relation:</label>
+                    <input type="text" id="groomrelation3" placeholder="Relation" />
+                    <label for="groommotherName3">Mother's Name:</label>
+                    <input type="text" id="groommotherName3" placeholder="Mother's Name" />
+                    <label for="groomfatherName3">Father's Name:</label>
+                    <input type="text" id="groomfatherName3" placeholder="Father's Name" />
+                    <label for="address3">Address:</label>
+                    <input type="text" id="address3" placeholder="Address" />
+                </div>
+                <div class="canvas-section">
+                    <h3>Preview</h3>
+                    <canvas id="canvas3" width="600" height="800"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4-->
+        <div id="step4" class="step hidden">
+            <h2>Step 4: Invitation Details Card</h2>
+            <div class="form-preview-container">
+                <div class="form-section">
+                    <label for="engagementTitle4">engagementTitle</label>
+                    <input type="text" id="engagementTitle4" placeholder="Engagement Ceremony" />
+                    <label for="engagementdateInput4">Date</label>
+                    <input type="date" id="engagementdateInput4" name="date" />
+                    <label for="engagementtimeInput4">Time</label>
+                    <input type="time" id="engagementtimeInput4" name="time" />
+
+                    <label for="haldiTitle4">haldiTitle</label>
+                    <input type="text" id="haldiTitle4" placeholder="Haldi Ceremony" />
+                    <label for="haldiDateInput4">Date</label>
+                    <input type="date" id="haldiDateInput4" name="date" />
+                    <label for="haldiTimeInput4">Time</label>
+                    <input type="time" id="haldiTimeInput4" name="time" />
+
+                    <label for="sangeetTitle4">sangeetTitle:</label>
+                    <input type="text" id="sangeetTitle4" placeholder="Sangeet Ceremony" />
+                    <label for="sangeetDateInput4">Date</label>
+                    <input type="date" id="sangeetDateInput4" name="date" />
+                    <label for="sangeetTimeInput4">Time</label>
+                    <input type="time" id="sangeetTimeInput4" name="time" />
+
+                    <input type="text" id="address4" placeholder="Address" />
+
+                </div>
+                <div class="canvas-section">
+                    <h3>Preview</h3>
+                    <canvas id="canvas4" width="600" height="800"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Step 5: All Cards Preview + Download -->
+        <div id="step5" class="step hidden">
+            <h2>Step 5: All Cards Preview</h2>
+            <div id="allCardsPreview" style="display:flex; gap:30px; justify-content:center; flex-wrap: wrap;"></div>
+            <div class="buttons">
+                <button id="downloadPdfBtn">Download All Cards as PDF</button>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="buttons">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+
+        </div>
+
+    </div>
+
+    <script>
+        // Initialize canvases
+        const canvas1 = new fabric.Canvas("canvas1");
+        const canvas2 = new fabric.Canvas("canvas2");
+        const canvas3 = new fabric.Canvas("canvas3");
+        const canvas4 = new fabric.Canvas("canvas4");
+
+
+
+
+        function formatTimeToAMPM(timeStr) {
+            // "14:30" => "2:30 PM"
+            if (!timeStr) return "";
+            const [hour, minute] = timeStr.split(":");
+            const h = parseInt(hour);
+            const suffix = h >= 12 ? "PM" : "AM";
+            const hour12 = ((h + 11) % 12 + 1);
+            return `${hour12}:${minute} ${suffix}`;
+        }
+
+        function formatDate(inputDate) {
+            // "2025-05-26" => "Mon, 26 May 2025"
+            if (!inputDate) return "";
+            const dateObj = new Date(inputDate);
+            return dateObj.toLocaleDateString('en-GB', {
+                weekday: 'short',
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+
+
+
+        function initCanvas1() {
+            canvas1.clear();
+            canvas1.setBackgroundColor("#f8bbd0", canvas1.renderAll.bind(canvas1));
+            fabric.Image.fromURL(
+                "images/engagment-post.png",
+                function (img) {
+                    const canvasWidth = canvas1.getWidth();
+                    const canvasHeight = canvas1.getHeight();
+
+                    // Calculate scale based on canvas size and image original size
+                    const scaleX = canvasWidth / img.width;
+                    const scaleY = canvasHeight / img.height;
+
+                    img.set({
+                        left: 0,
+                        top: 0,
+                        scaleX: scaleX,
+                        scaleY: scaleY,
+                        selectable: false
+                    });
+
+                    canvas1.add(img);
+                    canvas1.sendToBack(img);
+                    canvas1.renderAll();
+                },
+                { crossOrigin: "anonymous" }
+            );
+
+        }
+
+        function initCanvas2() {
+            canvas2.clear();
+            canvas2.setBackgroundColor("#f3e5f5", canvas2.renderAll.bind(canvas2));
+            fabric.Image.fromURL(
+                "images/engagment-post.png",
+                function (img) {
+                    const canvasWidth = canvas2.getWidth();
+                    const canvasHeight = canvas2.getHeight();
+
+                    // Calculate scale based on canvas size and image original size
+                    const scaleX = canvasWidth / img.width;
+                    const scaleY = canvasHeight / img.height;
+
+                    img.set({
+                        left: 0,
+                        top: 0,
+                        scaleX: scaleX,
+                        scaleY: scaleY,
+                        selectable: false
+                    });
+
+                    canvas2.add(img);
+                    canvas2.sendToBack(img);
+                    canvas2.renderAll();
+                },
+
+                { crossOrigin: "anonymous" }
+            );
+        }
+
+        function initCanvas3() {
+            canvas3.clear();
+            canvas3.setBackgroundColor("#f3e5f5", canvas3.renderAll.bind(canvas3));
+            fabric.Image.fromURL(
+                "images/engagment-post.png",
+                function (img) {
+                    const canvasWidth = canvas3.getWidth();
+                    const canvasHeight = canvas3.getHeight();
+
+                    // Calculate scale based on canvas size and image original size
+                    const scaleX = canvasWidth / img.width;
+                    const scaleY = canvasHeight / img.height;
+
+                    img.set({
+                        left: 0,
+                        top: 0,
+                        scaleX: scaleX,
+                        scaleY: scaleY,
+                        selectable: false
+                    });
+
+                    canvas3.add(img);
+                    canvas3.sendToBack(img);
+                    canvas3.renderAll();
+                },
+                { crossOrigin: "anonymous" }
+            );
+        }
+
+        function initCanvas4() {
+            canvas4.clear();
+            canvas4.setBackgroundColor("#f3e5f5", canvas4.renderAll.bind(canvas4));
+            fabric.Image.fromURL(
+                "images/engagment-post.png",
+                function (img) {
+                    const canvasWidth = canvas4.getWidth();
+                    const canvasHeight = canvas4.getHeight();
+
+                    // Calculate scale based on canvas size and image original size
+                    const scaleX = canvasWidth / img.width;
+                    const scaleY = canvasHeight / img.height;
+
+                    img.set({
+                        left: 0,
+                        top: 0,
+                        scaleX: scaleX,
+                        scaleY: scaleY,
+                        selectable: false
+                    });
+
+                    canvas4.add(img);
+                    canvas4.sendToBack(img);
+                    canvas4.renderAll();
+                },
+                { crossOrigin: "anonymous" }
+            );
+        }
+
+
+        document.getElementById("groomImageUpload3").addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (f) {
+                const data = f.target.result;
+                fabric.Image.fromURL(data, function (img) {
+                    img.set({
+                        left: 140,
+                        top: 20,
+                        scaleX: 0.3,
+                        scaleY: 0.3,
+                        selectable: true,
+                        hasControls: true,
+                        hasBorders: true,
+                    });
+
+                    // Remove previously uploaded images (optional cleanup)
+                    const oldImages = canvas3.getObjects('image').filter(i => i.customType === "userUpload");
+                    oldImages.forEach(i => canvas3.remove(i));
+
+                    img.customType = "userUpload"; // Tag for future cleanup
+                    canvas3.add(img);
+                    canvas3.renderAll();
+                }, { crossOrigin: "anonymous" });
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById("brideImageUpload2").addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (f) {
+                const data = f.target.result;
+                fabric.Image.fromURL(data, function (img) {
+                    img.set({
+                        left: 140,
+                        top: 20,
+                        scaleX: 0.3,
+                        scaleY: 0.3,
+                        selectable: true,
+                        hasControls: true,
+                        hasBorders: true,
+                    });
+
+                    // Remove previously uploaded images (optional cleanup)
+                    const oldImages = canvas2.getObjects('image').filter(i => i.customType === "userUpload");
+                    oldImages.forEach(i => canvas2.remove(i));
+
+                    img.customType = "userUpload"; // Tag for future cleanup
+                    canvas2.add(img);
+                    canvas2.renderAll();
+                }, { crossOrigin: "anonymous" });
+            };
+            reader.readAsDataURL(file);
+        });
+
+
+        function updateCanvas1Text() {
+            canvas1.getObjects("text").forEach(obj => canvas1.remove(obj));
+            const bride = document.getElementById("brideName1").value.trim();
+            const groom = document.getElementById("groomName1").value.trim();
+            const displayText = bride || groom ? `${bride} & ${groom}` : "Bride & Groom";
+
+            const textObj = new fabric.Text(displayText, {
+                left: canvas1.width / 2,
+                top: 380,
+                fontSize: 45,
+                fontFamily: "Great Vibes",
+                fill: "#4a148c",
+                originX: "center",
+            });
+            canvas1.add(textObj);
+            canvas1.renderAll();
+        }
+
+        function updateCanvas2Text() {
+            canvas2.getObjects("text").forEach(obj => canvas2.remove(obj));
+
+            const bride = document.getElementById("brideName2").value.trim() || "Bride Name";
+            const briderelation = document.getElementById("briderelation2").value.trim() || "Relation";
+            const bridemotherName = document.getElementById("bridemotherName2").value.trim() || "Mother's Name";
+            const bridefatherName = document.getElementById("bridefatherName2").value.trim() || "Father's Name";
+            const address = document.getElementById("address2").value.trim() || "Address";
+
+            const texts = [
+                { text: bride, top: 210, fontSize: 45, fontFamily: "Great Vibes", fill: "#4a148c" },
+                { text: briderelation, top: 280, fontSize: 17, fontFamily: "Poppins", fill: "#514079" },
+                { text: bridemotherName, top: 365, fontSize: 22, fontFamily: "Poppins", fill: "#7b1fa2" },
+                { text: bridefatherName, top: 395, fontSize: 22, fontFamily: "Poppins", fill: "#7b1fa2" },
+                { text: address, top: 440, fontSize: 18, fontFamily: "Poppins", fill: "#4a148c" },
+            ];
+
+            texts.forEach(t => {
+                const textObj = new fabric.Text(t.text, {
+                    left: canvas2.width / 2,
+                    top: t.top,
+                    fontSize: t.fontSize,
+                    fontFamily: t.fontFamily,
+                    fill: t.fill,
+                    originX: "center",
+                });
+                canvas2.add(textObj);
+            });
+
+            canvas2.renderAll();
+        }
+
+        function updateCanvas3Text() {
+            canvas3.getObjects("text").forEach(obj => canvas3.remove(obj));
+
+            const groom = document.getElementById("groomName3").value.trim() || "Groom Name";
+            const groomrelation = document.getElementById("groomrelation3").value.trim() || "Relation";
+            const groommotherName = document.getElementById("groommotherName3").value.trim() || "Mother's Name";
+            const groomfatherName = document.getElementById("groomfatherName3").value.trim() || "Father's Name";
+            const address = document.getElementById("address3").value.trim() || "Address";
+
+            const texts = [
+                { text: groom, top: 210, fontSize: 45, fontFamily: "Great Vibes", fill: "#4a148c" },
+                { text: groomrelation, top: 280, fontSize: 17, fontFamily: "Poppins", fill: "#514079" },
+                { text: groommotherName, top: 365, fontSize: 22, fontFamily: "Poppins", fill: "#7b1fa2" },
+                { text: groomfatherName, top: 395, fontSize: 22, fontFamily: "Poppins", fill: "#7b1fa2" },
+                { text: address, top: 440, fontSize: 18, fontFamily: "Poppins", fill: "#4a148c" },
+            ];
+
+            texts.forEach(t => {
+                const textObj = new fabric.Text(t.text, {
+                    left: canvas3.width / 2,
+                    top: t.top,
+                    fontSize: t.fontSize,
+                    fontFamily: t.fontFamily,
+                    fill: t.fill,
+                    originX: "center",
+                });
+                canvas3.add(textObj);
+            });
+
+            canvas3.renderAll();
+        }
+
+
+
+
+        function updateCanvas4Text() {
+            // Remove old texts
+            canvas4.getObjects("text").forEach(obj => canvas4.remove(obj));
+
+            // Get values from input fields
+            const engagementTitle = document.getElementById("engagementTitle4").value.trim() || "Engagement";
+            const engagementdateInput = document.getElementById("engagementdateInput4").value;
+            const engagementtimeInput = document.getElementById("engagementtimeInput4").value;
+
+            const haldiTitle = document.getElementById("haldiTitle4").value.trim() || "Haldi";
+            const haldiDateInput = document.getElementById("haldiDateInput4").value;
+            const haldiTimeInput = document.getElementById("haldiTimeInput4").value;
+
+            const sangeetTitle = document.getElementById("sangeetTitle4").value.trim() || "Sangeet";
+            const sangeetDateInput = document.getElementById("sangeetDateInput4").value;
+            const sangeetTimeInput = document.getElementById("sangeetTimeInput4").value;
+
+            const address = document.getElementById("address4").value.trim() || "Venue Address";
+
+            // Format dates and times
+            const formattedEngagementDate = formatDate(engagementdateInput);
+            const formattedEngagementTime = formatTimeToAMPM(engagementtimeInput);
+
+            const formattedHaldiDate = formatDate(haldiDateInput);
+            const formattedHaldiTime = formatTimeToAMPM(haldiTimeInput);
+
+            const formattedSangeetDate = formatDate(sangeetDateInput);
+            const formattedSangeetTime = formatTimeToAMPM(sangeetTimeInput);
+
+            // Add texts to canvas
+            const texts = [
+                { text: engagementTitle, top: 210, fontSize: 35, fontFamily: "Great Vibes", fill: "#4a148c" },
+                { text: `${formattedEngagementDate} at ${formattedEngagementTime}`, top: 260, fontSize: 18, fontFamily: "Roboto", fill: "#514079" },
+
+                { text: haldiTitle, top: 290, fontSize: 35, fontFamily: "Great Vibes", fill: "#4a148c" },
+                { text: `${formattedHaldiDate} at ${formattedHaldiTime}`, top: 330, fontSize: 18, fontFamily: "Roboto", fill: "#514079" },
+
+                { text: sangeetTitle, top: 360, fontSize: 35, fontFamily: "Great Vibes", fill: "#4a148c" },
+                { text: `${formattedSangeetDate} at ${formattedSangeetTime}`, top: 410, fontSize: 18, fontFamily: "Roboto", fill: "#514079" },
+
+                { text: address, top: 450, fontSize: 18, fontFamily: "Poppins", fill: "#4a148c" },
+            ];
+
+            texts.forEach(t => {
+                const textObj = new fabric.Text(t.text, {
+                    left: canvas4.width / 2,
+                    top: t.top,
+                    fontSize: t.fontSize,
+                    fontFamily: t.fontFamily,
+                    fill: t.fill,
+                    originX: "center"
+                });
+                canvas4.add(textObj);
+            });
+
+            canvas4.renderAll();
+        }
+
+
+        // Initialize both canvases on load
+        initCanvas1();
+        initCanvas2();
+        initCanvas3();
+        initCanvas4();
+        updateCanvas1Text();
+        updateCanvas2Text();
+        updateCanvas3Text();
+        updateCanvas4Text();
+
+        // Input event listeners to update canvases
+        document.getElementById("brideName1").addEventListener("input", updateCanvas1Text);
+        document.getElementById("groomName1").addEventListener("input", updateCanvas1Text);
+
+        document.getElementById("brideName2").addEventListener("input", updateCanvas2Text);
+        document.getElementById("briderelation2").addEventListener("input", updateCanvas2Text);
+        document.getElementById("bridemotherName2").addEventListener("input", updateCanvas2Text);
+        document.getElementById("bridefatherName2").addEventListener("input", updateCanvas2Text);
+        document.getElementById("address2").addEventListener("input", updateCanvas2Text);
+
+        document.getElementById("groomName3").addEventListener("input", updateCanvas3Text);
+        document.getElementById("groomrelation3").addEventListener("input", updateCanvas3Text);
+        document.getElementById("groommotherName3").addEventListener("input", updateCanvas3Text);
+        document.getElementById("groomfatherName3").addEventListener("input", updateCanvas3Text);
+        document.getElementById("address3").addEventListener("input", updateCanvas3Text);
+
+
+        document.getElementById("engagementTitle4").addEventListener("input", updateCanvas4Text);
+        document.getElementById("engagementdateInput4").addEventListener("change", updateCanvas4Text);
+        document.getElementById("engagementtimeInput4").addEventListener("change", updateCanvas4Text);
+        document.getElementById("haldiTitle4").addEventListener("input", updateCanvas4Text);
+        document.getElementById("haldiDateInput4").addEventListener("change", updateCanvas4Text);
+        document.getElementById("haldiTimeInput4").addEventListener("change", updateCanvas4Text);
+        document.getElementById("sangeetTitle4").addEventListener("input", updateCanvas4Text);
+        document.getElementById("sangeetDateInput4").addEventListener("change", updateCanvas4Text);
+        document.getElementById("sangeetTimeInput4").addEventListener("change", updateCanvas4Text);
+        document.getElementById("address4").addEventListener("input", updateCanvas4Text);
+
+
+
+        // Navigation between steps
+        const steps = ["step1", "step2", "step3", "step4", "step5"];
+        let currentStep = 0;
+
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+
+        function showStep(index) {
+            steps.forEach((stepId, i) => {
+                document.getElementById(stepId).classList.toggle("hidden", i !== index);
+            });
+            prevBtn.disabled = index === 0;
+            nextBtn.textContent = index === steps.length - 1 ? "Finish" : "Next";
+            currentStep = index;
+
+            if (index === 4) {
+
+                showAllCardsPreview();
+            }
+        }
+
+        prevBtn.addEventListener("click", () => {
+            if (currentStep > 0) showStep(currentStep - 1);
+        });
+        nextBtn.addEventListener("click", () => {
+            if (currentStep < steps.length - 1) {
+                showStep(currentStep + 1);
+            } else {
+                alert("You have completed all steps!");
+            }
+        });
+
+        showStep(0); // Show step 1 initially
+
+        // Show all cards preview as images inside #allCardsPreview div
+
+
+        // Show all canvas previews in image format (for visual preview)
+        function showAllCardsPreview() {
+            const previewContainer = document.getElementById("allCardsPreview");
+            previewContainer.innerHTML = ""; // Clear previous
+
+            [canvas1, canvas2, canvas3, canvas4].forEach((canvas, index) => {
+                const dataUrl = canvas.toDataURL({ format: 'png' });
+                const img = document.createElement("img");
+                img.src = dataUrl;
+                img.style.border = "1px solid #ccc";
+                img.style.width = "600px";
+                img.style.height = "800px";
+                img.alt = `Card ${index + 1}`;
+                previewContainer.appendChild(img);
+            });
+        }
+
+
+        // Download High-Quality PDF
+        document.getElementById("downloadPdfBtn").addEventListener("click", function () {
+            const { jsPDF } = window.jspdf;
+            const canvases = [canvas1, canvas2, canvas3, canvas4];
+            const scale = 3; // High-res scale factor
+
+            const pdf = new jsPDF({
+                orientation: "portrait",
+                unit: "pt",
+                format: [canvases[0].width * scale, canvases[0].height * scale]
+            });
+
+            canvases.forEach((canvas, index) => {
+                const imgData = canvas.toDataURL({
+                    format: 'jpeg',
+                    quality: 1.0,
+                    multiplier: scale
+                });
+
+                if (index > 0) {
+                    pdf.addPage([canvas.width * scale, canvas.height * scale]);
+                }
+
+                pdf.addImage(
+                    imgData,
+                    "JPEG",
+                    0,
+                    0,
+                    canvas.width * scale,
+                    canvas.height * scale
+                );
+            });
+
+            pdf.save("AllWeddingCards_HighQuality.pdf");
+        });
+
+
+
+
+
+
+
+        //  document.getElementById("downloadPdfBtn").addEventListener("click", async () => {
+        //     const { jsPDF } = window.jspdf;
+
+        //   const pdf = new jsPDF({
+        //orientation: "portrait",
+        //unit: "px",
+        // format: [600, 800],
+        //});
+
+        // Get images from canvases
+        //   const img1 = canvas1.toDataURL("image/png");
+        //   const img2 = canvas2.toDataURL("image/png");
+        //    const img3 = canvas3.toDataURL("image/png");
+
+        // Add first card image on page 1
+        //   pdf.addImage(img1, "PNG", 0, 0, 600, 800);
+
+        // Add new page
+        //   pdf.addPage([600, 800], "portrait");
+
+        // Add second card image on page 2
+        // pdf.addImage(img2, "PNG", 0, 0, 600, 800);
+
+
+
+        // Add second card image on page 3
+        // pdf.addImage(img3, "PNG", 0, 0, 600, 800);
+
+        // Save PDF
+        //   pdf.save("Wedding_Invitation_Cards.pdf");
+        // });
+    </script>
+</body>
+
+</html>
